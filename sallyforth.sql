@@ -106,6 +106,7 @@ CREATE TABLE spells_learned(
 );
 
 CREATE TABLE associations(
+	association_id int(11),
 	item_id int(11) not null,
     vulnerable_id int(11) not null,
     association_type enum('purchase', 'sell', 'drop', 'possess')
@@ -247,18 +248,19 @@ primary key (spell_id, vulnerable_id);
 
 ALTER TABLE associations
 ADD CONSTRAINT associationpk
-primary key (item_id, vulnerable_id);
+primary key (association_id, item_id, vulnerable_id),
+MODIFY association_id int (11) auto_increment not null;
 
 
 DELIMITER //
-CREATE PROCEDURE insert_player(IN id int, IN name_ text, IN vocation text)
+CREATE PROCEDURE insert_player(IN id INT, IN name_ text, IN vocation text)
 begin
-	INSERT INTO recordable VALUE (id, name_);
+	INSERT INTO recordable (name) VALUE (name_);
     INSERT INTO taxonomy VALUE (id, 'vulnerable');
     INSERT INTO vulnerable VALUE (id, 'player');
     INSERT INTO skills (vulnerable_id) VALUE (id);
     INSERT INTO healthy (vulnerable_id) VALUE (id);
-    INSERT INTO players VALUE (id, 'sorcerer');
+    INSERT INTO players VALUE (id, vocation);
 end //
 DELIMITER ;
 
@@ -285,7 +287,16 @@ SELECT r.id 'PLAYER ID',
     JOIN skills s ON s.vulnerable_id = v.vulnerable_id
     JOIN healthy h ON h.vulnerable_id = v.vulnerable_id;
 
+##@TODO = MAKE TRIGGERS TO AUTO GENERATE THE IDS.
+CALL insert_player(1,'King Arthur', 'sorcerer');
+CALL insert_player(2,'Kendran Eliorath', 'knight');
+CALL insert_player(3,'Judith Warrs', 'sorcerer');
+CALL insert_player(4,'Dimmus Borgirs', 'sorcerer');
+CALL insert_player(5,'Bendran Helliot', 'paladin');
+CALL insert_player(6,'Murdoc Mantova', 'knight');
+CALL insert_player(7,'Pitter Tarazz', 'paladin');
+CALL insert_player(8,'Julius Fandoble', 'druid');
+CALL insert_player(9,'Almighty Fernandus', 'druid');
 
-CALL insert_player(1, 'King Arthur', 'sorcerer');
 
 SELECT * FROM see_players;
