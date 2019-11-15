@@ -52,8 +52,8 @@ CALL insert_monster('Scarab', 1, 24);
 
 
 
-
-SELECT * FROM see_players;
+##Felipe Mantovani 2017192
+SELECT id 'ID', name 'NAME',level 'LEVEL', hp 'HP', mp 'MP' FROM see_players WHERE name LIKE '%a%';
 SELECT * FROM see_equipment;
 SELECT * FROM see_weapons;
 SELECT * FROM see_consumables;
