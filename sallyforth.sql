@@ -28,7 +28,27 @@ CALL insert_equipment_weapon('Knight Axe','48', '36', '15');
 CALL insert_equipment_weapon('Giant Sword','110', '45', '27');
 CALL insert_equipment_weapon('War Hamer','70', '41', '9');
 
+##inserting liquids
+CALL insert_consumable('Health Potion','2', 100, 0);
+CALL insert_consumable('Strong Health Potion', 4, 500, 0);
+CALL insert_consumable('Mana Potion', 3,'500', '12');
+CALL insert_consumable('Flask of Poison','2', '0', '-100');
+CALL insert_consumable('Cup of Water','1', 0, 0);
+CALL insert_consumable('Flask of Blood','4', '0', '0');
 
+CALL insert_npc('Josh', 'merchant');
+CALL insert_npc('Eva', 'banker');
+CALL insert_npc('Hero', 'loremaster');
+CALL insert_npc('Rachel', 'professor');
+CALL insert_npc('Lira', 'scientist');
+CALL insert_npc('Sallyus, The King', 'king');
+
+CALL insert_monster('Goblin', 3, 10);
+CALL insert_monster('Demon', 1, 200);
+CALL insert_monster('Juggernault', 2, 500);
+CALL insert_monster('Dragon', 2, 120);
+CALL insert_monster('Basilisk', 4, 33);
+CALL insert_monster('Scarab', 1, 24);
 
 
 
@@ -36,5 +56,6 @@ CALL insert_equipment_weapon('War Hamer','70', '41', '9');
 SELECT * FROM see_players;
 SELECT * FROM see_equipment;
 SELECT * FROM see_weapons;
-
-
+SELECT * FROM see_consumables;
+SELECT * FROM see_npcs;
+SELECT * FROM see_monsters;

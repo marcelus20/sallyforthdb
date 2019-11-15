@@ -39,7 +39,7 @@ CREATE TABLE healthy(
 
 CREATE TABLE monsters(
 	vulnerable_id int(11) not null,
-    respawn_time int(3)
+    respawn_time int(3) default(1)
 );
 
 CREATE TABLE npcs(
@@ -293,16 +293,48 @@ END //
 DELIMITER ;
 
 
+##CREATING HELPER PROCEDURE FOR VULNERABLE INSERTION
+DROP PROCEDURE IF EXISTS insert_vulnerable;
+DELIMITER //
+CREATE PROCEDURE insert_vulnerable(IN name_ text, IN type text, OUT id int)
+BEGIN
+	CALL insert_taxonomy(name_, 'vulnerable', @id);
+    SET id = @id;
+    INSERT INTO vulnerable VALUE (@id, type);
+    INSERT INTO skills (vulnerable_id) VALUE (@id);
+    INSERT INTO healthy (vulnerable_id) VALUE (@id);
+END //
+DELIMITER ;
+
+
 ##CREATION OF A PROCEDURE THAT ADDS A NEW PLAYER TO THE SYSTEM WHEN RECENTLY CREATED
 DROP PROCEDURE IF EXISTS insert_player;
 DELIMITER //
 CREATE PROCEDURE insert_player(IN name_ text, IN vocation text)
 begin
-	CALL insert_taxonomy(name_, 'vulnerable', @id);
-    INSERT INTO vulnerable VALUE (@id, 'player');
-    INSERT INTO skills (vulnerable_id) VALUE (@id);
-    INSERT INTO healthy (vulnerable_id) VALUE (@id);
+	CALL insert_vulnerable(name_, 'player', @id);
     INSERT INTO players VALUE (@id, vocation);
+end //
+DELIMITER ;
+
+##CREATION OF A PROCEDURE THAT ADDS A NEW MONSTER
+DROP PROCEDURE IF EXISTS insert_monster;
+DELIMITER //
+CREATE PROCEDURE insert_monster(IN name_ text, IN respawn_time text, IN level_ INT)
+begin
+	CALL insert_vulnerable(name_, 'monster', @id);
+    INSERT INTO monsters VALUE (@id, respawn_time);
+    UPDATE skills SET level = level_ WHERE vulnerable_id = @id;
+end //
+DELIMITER ;
+
+##CREATION OF A PROCEDURE THAT ADDS A NEW NPC
+DROP PROCEDURE IF EXISTS insert_npc;
+DELIMITER //
+CREATE PROCEDURE insert_npc(IN name_ text, IN profession text)
+begin
+	CALL insert_vulnerable(name_, 'npc', @id);
+    INSERT INTO npcs VALUE (@id, profession);
 end //
 DELIMITER ;
 
@@ -348,53 +380,134 @@ BEGIN
 END //
 DELIMITER ;
 
+
+DROP VIEW IF EXISTS see_vulnerables;
+CREATE VIEW see_vulnerables AS
+	SELECT
+		r.id 'ID', 
+        r.name 'NAME',
+        #t.taxonomy_type 'GROUP',
+		v.vulnerable_type 'SUBGROUP',
+        h.current_hitpoint 'CURRENTHP' ,
+		h.current_manapoint 'CURRENTMP',
+        h.stamina 'STAMINA'
+	FROM recordable r 
+		#JOIN taxonomy t ON t.taxonomy_id = r.id 
+		JOIN vulnerable v 
+			ON r.id = v.vulnerable_id
+		JOIN healthy h ON
+			h.vulnerable_id = v.vulnerable_id;
+
+DROP VIEW IF EXISTS see_npcs;
+CREATE VIEW see_npcs AS
+	SELECT
+		sv.id 'ID',
+        sv.name 'NAME',
+        #sv.group 'GROUP',
+        sv.subgroup 'SUB GROUP',
+        sv.currenthp 'CURRENT HP',
+        sv.currentmp 'CURRENT MP',
+        n.profession 'PROFESSION'
+	FROM see_vulnerables sv
+		JOIN npcs n
+			ON sv.id = n.vulnerable_id;
+
+DROP VIEW IF EXISTS see_monsters;
+CREATE VIEW see_monsters AS
+	SELECT
+		sv.id 'ID',
+        sv.name 'NAME',
+        s.level 'LEVEL',
+        #sv.group 'GROUP',
+        sv.subgroup 'SUB GROUP',
+        sv.currenthp 'CURRENT HP',
+        sv.currentmp 'CURRENT MP',
+        m.respawn_time 'RESPAWN TIME'
+	FROM see_vulnerables sv
+		JOIN monsters m
+			ON sv.id = m.vulnerable_id
+		JOIN skills s 
+			ON sv.id = s.vulnerable_id;
+        
+
 DROP VIEW IF EXISTS see_players;
 CREATE VIEW see_players AS 
-SELECT r.id 'PLAYER ID',
- r.name 'PLAYER NAME',
- t.taxonomy_type 'GROUP',
- v.vulnerable_type 'SUB GROUP',
- s.level 'LEVEL' ,
- s.hitpoint 'HP',
- s.manapoint 'MP',
- s.capacity 'CAPACITY',
- s.magiclevel 'MAGIC LEVEL' ,
- s.swordfighting 'SWORD FIGHTING',
- s.axefighting 'AXE FIGHTING' ,
- s.clubfighting 'CLUB FIGHTING',
- s.fishing 'FISHING',
- h.current_hitpoint 'CURRENT HP' ,
- h.current_manapoint 'CURRENT MP',
- h.stamina 'STAMINA' 
- FROM recordable r 
-	JOIN taxonomy t ON t.taxonomy_id = r.id 
-    JOIN vulnerable v ON t.taxonomy_id = v.vulnerable_id
-    JOIN skills s ON s.vulnerable_id = v.vulnerable_id
-    JOIN healthy h ON h.vulnerable_id = v.vulnerable_id;
+	SELECT 
+		sv.id 'ID',
+		sv.name 'NAME',
+        p.vocation 'VOCATION',
+        s.level 'LEVEL' ,
+		#t.taxonomy_type 'GROUP',
+		sv.subgroup 'SUBGROUP',
+		s.hitpoint 'HP',
+		s.manapoint 'MP',
+		s.capacity 'CAPACITY',
+		s.magiclevel 'MAGIC LEVEL' ,
+		s.swordfighting 'SWORD FIGHTING',
+		s.axefighting 'AXE FIGHTING' ,
+		s.clubfighting 'CLUB FIGHTING',
+		s.fishing 'FISHING',
+		sv.currenthp 'CURRENT HP' ,
+		sv.currentmp 'CURRENT MP',
+		sv.stamina 'STAMINA' 
+	FROM see_vulnerables sv
+		JOIN players p
+			ON p.vulnerable_id = sv.id
+		JOIN skills s 
+			ON s.vulnerable_id = p.vulnerable_id;
 
 
 
+DROP VIEW IF EXISTS see_items;
+CREATE VIEW see_items AS
+	SELECT
+		r.id 'ID',
+		r.name 'NAME',
+		#t.taxonomy_type 'GROUP',
+		#i.item_type 'SUBGROUP',
+		i.weight 'WEIGHT'
+	FROM recordable r 
+		#JOIN taxonomy t ON r.id = t.taxonomy_id
+        JOIN item i 
+			ON i.item_id = r.id;
 
 DROP VIEW IF EXISTS see_equipment;
 CREATE VIEW see_equipment AS
-SELECT 
-	r.id 'ID',
-    r.name 'NAME',
-    #t.taxonomy_type 'GROUP',
-    #i.item_type 'SUB GROUP',
-    i.weight 'WEIGHT',
-    p.defense 'DEFENSE' 
-    FROM recordable r 
-		JOIN taxonomy t ON r.id = t.taxonomy_id
-        JOIN item i ON i.item_id = r.id
-        JOIN physicality p ON p.item_id = r.id;
+	SELECT 
+		si.id 'ID',
+		si.name 'NAME',
+		#si.group 'GROUP',
+		#si.subgroup 'SUB GROUP',
+		si.weight 'WEIGHT',
+		p.defense 'DEFENSE' 
+	FROM see_items si
+		JOIN physicality p
+			ON p.item_id = si.ID;
 
 DROP VIEW IF EXISTS see_weapons;
 CREATE VIEW see_weapons AS
-SELECT 
-	s.id 'ID',
-    s.name 'NAME',
-    s.weight 'WEIGHT',
-    s.defense 'DEFENSE',
-    w.attack 'ATTACK' 
-    FROM see_equipment s JOIN weapons w ON w.physicality_id = s.ID;
+	SELECT 
+		se.id 'ID',
+		se.name 'NAME',
+		se.weight 'WEIGHT',
+		#se.group 'GROUP',
+		#se.subgroup 'SUB GROUP',
+		se.defense 'DEFENSE',
+		w.attack 'ATTACK' 
+    FROM see_equipment se
+		JOIN weapons w
+			ON w.physicality_id = se.ID;
+    
+DROP VIEW IF EXISTS see_consumables;
+CREATE VIEW see_consumables AS
+	SELECT 
+		si.id 'ID',
+		si.name 'NAME',
+		si.weight 'WEIGHT',
+		#si.group 'GROUP',
+		#si.soubgroup 'SUBGROUP',
+		h.manapoints_to_heal 'MP TO HEAL',
+		h.hitpoints_to_heal 'HP TO HEAL'
+	FROM healability h 
+		JOIN see_items si
+			ON h.item_id = si.id;
