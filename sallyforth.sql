@@ -63,14 +63,19 @@ CALL insert_spell_learned('exura', 'Bendran Helliot');
 CALL insert_spell_learned('utana vid', 'Almighty Fernandus');
 CALL insert_spell_learned('utevo res ina', 'Julius Fandoble');
 
-###ASSIGNING SOME DROP TO MONSTERS
-INSERT INTO associations (1,14, 32, 'drop');
-INSERT INTO associations (1,13, 36, 'drop');
-INSERT INTO associations (1,15, 35, 'drop');
-INSERT INTO associations (1,16, 33, 'drop');
 
-##Felipe Mantovani 2017192
-SELECT id 'ID', name 'NAME',level 'LEVEL', hp 'HP', mp 'MP' FROM see_players;
+###ASSIGNING SOME DROP TO MONSTERS
+CALL associate_vulnerable_with_an_item ('Mana Potion', 'Goblin','drop');
+CALL associate_vulnerable_with_an_item ('Cup of Water', 'Goblin', 'drop');
+CALL associate_vulnerable_with_an_item ('Fire Sword', 'Demon', 'drop');
+CALL associate_vulnerable_with_an_item('Knight Axe', 'Dragon', 'drop');
+CALL associate_vulnerable_with_an_item('Medusa Shield', 'Basilisk','drop');
+
+
+
+SELECT id 'ID', name 'NAME',level 'LEVEL', hp 'HP', mp 'MP' FROM see_players; ##Felipe Mantovani 2017192
+
+
 SELECT * FROM see_equipment;
 SELECT * FROM see_weapons;
 SELECT * FROM see_consumables;
@@ -78,3 +83,8 @@ SELECT * FROM see_npcs;
 SELECT * FROM see_monsters;
 SELECT * FROM see_spells;
 SELECT * FROM see_vulnerable_learned_spells;
+
+
+SELECT * FROM see_drop_list; ##Caue Duarte 2017228
+CALL get_number_of_dropped_items('Goblin', @counter); ##Caue Duarte 2017228
+SELECT @counter 'Goblin drops:'; ##Caue Duarte 2017228

@@ -109,7 +109,6 @@ CREATE TABLE spells_learned(
 );
 
 CREATE TABLE associations(
-	association_id int(11),
 	item_id int(11) not null,
     vulnerable_id int(11) not null,
     association_type enum('purchase', 'sell', 'drop', 'possess')
@@ -187,8 +186,6 @@ ALTER TABLE spells_learned
 
 
 ALTER TABLE associations
-	ADD CONSTRAINT association_idfk
-		foreign key (association_id) references recordable(id),
 	ADD CONSTRAINT association_item_idfk
 		foreign key (item_id) references item(item_id),
 	ADD CONSTRAINT association_vulnerable_idfk
@@ -260,8 +257,9 @@ ALTER TABLE spells_learned
 
 
 ALTER TABLE associations
-	ADD CONSTRAINT associationpk
-		primary key (association_id, item_id, vulnerable_id);
+    ADD CONSTRAINT associationpk
+		primary key (item_id, vulnerable_id, association_type);
+	
 
 
 
@@ -399,6 +397,32 @@ CREATE PROCEDURE insert_spell_learned(IN spell_name text, IN vulnerable_name tex
 BEGIN
     insert into spells_learned value (get_id(spell_name),get_id(vulnerable_name));
 END //
+DELIMITER ;
+
+DROP PROCEDURE IF EXISTS associate_player_with_an_item;
+DELIMITER //
+CREATE PROCEDURE associate_vulnerable_with_an_item(IN item_name text, IN vulnerable_name text, IN association_type_ text)
+BEGIN
+	insert into 
+		associations (item_id, vulnerable_id, association_type)
+	value 
+		(get_id(item_name), get_id(vulnerable_name), association_type_);
+END //
+DELIMITER ;
+
+
+#COUNTS THE NUMBER OF ITEMS DROPPED BY A MONSTER AND RETURN IT IN A VARIABLE
+DROP PROCEDURE IF EXISTS get_number_of_dropped_items;
+DELIMITER //
+CREATE PROCEDURE get_number_of_dropped_items (IN monster_name text, OUT total int)
+BEGIN
+	SET total = (SELECT 
+		count(ID) 
+	FROM
+		see_drop_list
+	WHERE
+		ID = get_id(monster_name));
+END//
 DELIMITER ;
 
 
@@ -562,7 +586,7 @@ CREATE VIEW see_vulnerable_learned_spells AS
 			ON sl.vulnerable_id = sp.id;
 
 ##Caue Duarte 2017228
-CREATE  OR REPLACE VIEW see_dropList AS
+CREATE  OR REPLACE VIEW see_drop_list AS
 	SELECT 
 		sm.ID 'ID',
 		sm.NAME 'NAME',
@@ -570,19 +594,7 @@ CREATE  OR REPLACE VIEW see_dropList AS
 		si.NAME 'ITEM' 
     FROM see_monsters sm
 		JOIN associations a
-			ON a.vulnerable_id = sm.ID;
+			ON a.vulnerable_id = sm.ID
 		JOIN see_items si
 			ON si.ID = a.item_id;
 
-#COUNTS THE NUMBER OF ITEMS DROPPED BY A MONSTER AND RETURN IT IN A VARIABLE
-DROP PROCEDURE IF EXISTS GetNumberOfDroppedItems;
-DELIMITER //
-CREATE PROCEDURE GetNumberOfDroppedItems (IN monsterID int, OUT total int)
-BEGIN
-SELECT count(ID) INTO total
-FROM
-see_dropList
-WHERE
-ID = monsterID;
-END//
-DELIMITER ;
