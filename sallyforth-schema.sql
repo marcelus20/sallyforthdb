@@ -60,7 +60,7 @@ CREATE TABLE spells(
 );
 
 ## THE SPELL EFFECT 1 TO 1
-CREATE TABLE effect(
+CREATE TABLE effects(
 	spell_id int(11) not null,
     effect_name varchar(25) not null,
     effect_efficiency int(3) not null,
@@ -119,148 +119,149 @@ CREATE TABLE associations(
 
 ##FK CONSTRAINTS ASSIGNMENT
 ALTER TABLE recordable
-ADD CONSTRAINT recordablepk
-primary key (id, name),
-MODIFY id int(11) auto_increment;
+	ADD CONSTRAINT recordablepk
+		primary key (id, name),
+	MODIFY id int(11) auto_increment;
 
 ALTER TABLE taxonomy
-ADD CONSTRAINT taxonomyfk
-foreign key (taxonomy_id) references recordable(id);
+	ADD CONSTRAINT taxonomyfk
+		foreign key (taxonomy_id) references recordable(id);
 
 ALTER TABLE vulnerable
-ADD CONSTRAINT vulnerablefk
-foreign key (vulnerable_id) references taxonomy(taxonomy_id);
+	ADD CONSTRAINT vulnerablefk
+		foreign key (vulnerable_id) references taxonomy(taxonomy_id);
 
 ALTER TABLE skills
-ADD CONSTRAINT skillsfk
-foreign key (vulnerable_id) references vulnerable(vulnerable_id);
+	ADD CONSTRAINT skillsfk
+		foreign key (vulnerable_id) references vulnerable(vulnerable_id);
 
 ALTER TABLE healthy
-ADD CONSTRAINT healthyfk
-foreign key (vulnerable_id) references vulnerable(vulnerable_id);
+	ADD CONSTRAINT healthyfk
+		foreign key (vulnerable_id) references vulnerable(vulnerable_id);
 
 ALTER TABLE monsters
-ADD CONSTRAINT monstersfk
-foreign key (vulnerable_id) references vulnerable(vulnerable_id);
+	ADD CONSTRAINT monstersfk
+		foreign key (vulnerable_id) references vulnerable(vulnerable_id);
 
 ALTER TABLE npcs
-ADD CONSTRAINT npcsfk
-foreign key (vulnerable_id) references vulnerable(vulnerable_id);
+	ADD CONSTRAINT npcsfk
+		foreign key (vulnerable_id) references vulnerable(vulnerable_id);
 
 ALTER TABLE players
-ADD CONSTRAINT playersfk
-foreign key (vulnerable_id) references vulnerable(vulnerable_id);
+	ADD CONSTRAINT playersfk
+		foreign key (vulnerable_id) references vulnerable(vulnerable_id);
 
 ALTER TABLE spells
-ADD CONSTRAINT spellsfk
-foreign key (spell_id) references taxonomy(taxonomy_id);
+	ADD CONSTRAINT spellsfk
+		foreign key (spell_id) references taxonomy(taxonomy_id);
 
-ALTER TABLE effect
-ADD CONSTRAINT effectfk
-foreign key (spell_id) references spells(spell_id);
+ALTER TABLE effects
+	ADD CONSTRAINT effectfk
+		foreign key (spell_id) references spells(spell_id);
 
 ALTER TABLE item
-ADD CONSTRAINT itemfk
-foreign key (item_id) references taxonomy(taxonomy_id);
+	ADD CONSTRAINT itemfk
+		foreign key (item_id) references taxonomy(taxonomy_id);
 
 ALTER TABLE effectiveness
-ADD CONSTRAINT effectivenessfk
-foreign key (item_id) references item(item_id);
+	ADD CONSTRAINT effectivenessfk
+		foreign key (item_id) references item(item_id);
 
 ALTER TABLE healability
-ADD CONSTRAINT healabilityfk
-foreign key (item_id) references item(item_id);
+	ADD CONSTRAINT healabilityfk
+		foreign key (item_id) references item(item_id);
 
 ALTER TABLE physicality
-ADD CONSTRAINT phisicalityfk
-foreign key (item_id) references item(item_id);
+	ADD CONSTRAINT phisicalityfk
+		foreign key (item_id) references item(item_id);
 
 ALTER TABLE weapons
-ADD CONSTRAINT weaponfk
-foreign key(physicality_id) references physicality(item_id);
+	ADD CONSTRAINT weaponfk
+		foreign key(physicality_id) references physicality(item_id);
 
 ALTER TABLE spells_learned
-ADD CONSTRAINT spells_learned_spell_idfk
-foreign key (spell_id) references item(item_id),
-ADD CONSTRAINT spells_learned_vulnerable_idfk
-foreign key (vulnerable_id) references vulnerable(vulnerable_id);
+	ADD CONSTRAINT spells_learned_spell_idfk
+		foreign key (spell_id) references spells(spell_id),
+	ADD CONSTRAINT spells_learned_vulnerable_idfk
+		foreign key (vulnerable_id) references vulnerable(vulnerable_id);
 
 
 ALTER TABLE associations
-ADD CONSTRAINT association_item_idfk
-foreign key (item_id) references item(item_id),
-ADD CONSTRAINT association_vulnerable_idfk
-foreign key (vulnerable_id) references vulnerable(vulnerable_id);
+	ADD CONSTRAINT association_idfk
+		foreign key (association_id) references recordable(id),
+	ADD CONSTRAINT association_item_idfk
+		foreign key (item_id) references item(item_id),
+	ADD CONSTRAINT association_vulnerable_idfk
+		foreign key (vulnerable_id) references vulnerable(vulnerable_id);
 
 
 
 ##PK CONSTRAINT ASSIGNMENTS
 
 ALTER TABLE taxonomy
-ADD CONSTRAINT taxonomypk
-primary key (taxonomy_id);
+	ADD CONSTRAINT taxonomypk
+		primary key (taxonomy_id);
 
 ALTER TABLE vulnerable
-ADD CONSTRAINT vulnerablepk
-primary key (vulnerable_id);
+	ADD CONSTRAINT vulnerablepk
+		primary key (vulnerable_id);
 
 ALTER TABLE skills
-ADD CONSTRAINT skillspk
-primary key (vulnerable_id);
+	ADD CONSTRAINT skillspk
+		primary key (vulnerable_id);
 
 ALTER TABLE healthy
-ADD CONSTRAINT healthypk
-primary key (vulnerable_id);
+	ADD CONSTRAINT healthypk
+		primary key (vulnerable_id);
 
 ALTER TABLE monsters
-ADD CONSTRAINT monsterspk
-primary key (vulnerable_id);
+	ADD CONSTRAINT monsterspk
+		primary key (vulnerable_id);
 
 ALTER TABLE npcs
-ADD CONSTRAINT npcspk
-primary key (vulnerable_id);
+	ADD CONSTRAINT npcspk
+		primary key (vulnerable_id);
 
 ALTER TABLE players
-ADD CONSTRAINT playerspk
-primary key (vulnerable_id);
+	ADD CONSTRAINT playerspk
+		primary key (vulnerable_id);
 
 ALTER TABLE spells
-ADD CONSTRAINT spellspk
-primary key (spell_id);
+	ADD CONSTRAINT spellspk
+		primary key (spell_id);
 
-ALTER TABLE effect
-ADD CONSTRAINT effectpk
-primary key (spell_id);
+ALTER TABLE effects
+	ADD CONSTRAINT effectpk
+		primary key (spell_id);
 
 ALTER TABLE item
-ADD CONSTRAINT itempk
-primary key (item_id);
+	ADD CONSTRAINT itempk
+		primary key (item_id);
 
 ALTER TABLE effectiveness
-ADD CONSTRAINT effectivenesspk
-primary key (item_id);
+	ADD CONSTRAINT effectivenesspk
+		primary key (item_id);
 
 ALTER TABLE healability
-ADD CONSTRAINT healabilitypk
-primary key (item_id);
+	ADD CONSTRAINT healabilitypk
+		primary key (item_id);
 
 ALTER TABLE physicality
-ADD CONSTRAINT phisicalitypk
-primary key (item_id);
+	ADD CONSTRAINT phisicalitypk
+		primary key (item_id);
 
 ALTER TABLE weapons
-ADD CONSTRAINT weaponpk
-primary key (physicality_id);
+	ADD CONSTRAINT weaponpk
+		primary key (physicality_id);
 
 ALTER TABLE spells_learned
-ADD CONSTRAINT spells_learnedpk
-primary key (spell_id, vulnerable_id);
+	ADD CONSTRAINT spells_learnedpk
+		primary key (spell_id, vulnerable_id);
 
 
 ALTER TABLE associations
-ADD CONSTRAINT associationpk
-primary key (association_id, item_id, vulnerable_id),
-MODIFY association_id int (11) auto_increment not null;
+	ADD CONSTRAINT associationpk
+		primary key (association_id, item_id, vulnerable_id);
 
 
 
@@ -381,6 +382,40 @@ BEGIN
 END //
 DELIMITER ;
 
+
+DROP PROCEDURE IF EXISTS insert_spell; 
+DELIMITER // 
+CREATE PROCEDURE insert_spell(IN name_ text, IN mana_to_spend_ text, IN effect_name_ text, IN effect_efficiency_ int, IN effect_description_ text)
+BEGIN
+	CALL insert_taxonomy(name_, 'spell', @id);
+    insert into spells value (@id, mana_to_spend);
+    insert into effects value (@id, effect_name_, effect_efficiency_, effect_description_);
+END //
+DELIMITER ;
+
+DROP PROCEDURE IF EXISTS insert_spell_learned; 
+DELIMITER // 
+CREATE PROCEDURE insert_spell_learned(IN spell_name text, IN vulnerable_name text)
+BEGIN
+    insert into spells_learned value (get_id(spell_name),get_id(vulnerable_name));
+END //
+DELIMITER ;
+
+
+DROP VIEW IF EXISTS see_spells;
+CREATE VIEW see_spells AS
+	SELECT 
+		r.id 'ID',
+        r.name 'NAME',
+        s.mana_to_spend 'MANA COST',
+        e.effect_name 'EFFECT NAME',
+        e.effect_efficiency 'EFFICIENCY',
+        e.effect_description 'DESCRIPTION'
+	FROM recordable r 
+		JOIN spells s 
+			ON s.spell_id = r.id
+		JOIN effects e
+			ON e.spell_id = r.id;
 
 DROP VIEW IF EXISTS see_vulnerables;
 CREATE VIEW see_vulnerables AS
@@ -512,3 +547,16 @@ CREATE VIEW see_consumables AS
 	FROM healability h 
 		JOIN see_items si
 			ON h.item_id = si.id;
+
+DROP VIEW IF EXISTS see_vulnerable_learned_spells;
+CREATE VIEW see_vulnerable_learned_spells AS
+	SELECT 	
+		sp.id 'PLAYER ID',
+        sp.name 'PLAYER NAME',
+        ss.id 'SPELL ID',
+        ss.name 'SPELL NAME'
+	FROM spells_learned sl
+		JOIN see_spells ss 
+			ON sl.spell_id = ss.id 
+		JOIN see_players sp 
+			ON sl.vulnerable_id = sp.id;

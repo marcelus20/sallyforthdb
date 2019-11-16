@@ -50,12 +50,25 @@ CALL insert_monster('Dragon', 2, 120);
 CALL insert_monster('Basilisk', 4, 33);
 CALL insert_monster('Scarab', 1, 24);
 
+CALL insert_spell('utevo lux', 20, 'light', 15, 'creates a magic torch around its caster');
+CALL insert_spell('exura', 20, 'healing', 20, 'heals it caster up to 25 HP');
+CALL insert_spell('exura vita', 160, 'healing', 80, 'heals it caster up to 200 HP');
+CALL insert_spell('utana vid', 350, 'invisibility', 6, 'makes it caster invisible for 6 minutes');
+CALL insert_spell('utevo res ina', 660, 'illusion', 10, 'the invoker gets a illusion form of a random existing creature');
 
+###TEACHING PLAYERS SOME SPELLS
+CALL insert_spell_learned('utevo res ina', 'Kendran Eliorath');
+CALL insert_spell_learned('exura vita', 'Kendran Eliorath');
+CALL insert_spell_learned('exura', 'Bendran Helliot');
+CALL insert_spell_learned('utana vid', 'Almighty Fernandus');
+CALL insert_spell_learned('utevo res ina', 'Julius Fandoble');
 
 ##Felipe Mantovani 2017192
-SELECT id 'ID', name 'NAME',level 'LEVEL', hp 'HP', mp 'MP' FROM see_players WHERE name LIKE '%a%';
+SELECT id 'ID', name 'NAME',level 'LEVEL', hp 'HP', mp 'MP' FROM see_players;
 SELECT * FROM see_equipment;
 SELECT * FROM see_weapons;
 SELECT * FROM see_consumables;
 SELECT * FROM see_npcs;
 SELECT * FROM see_monsters;
+SELECT * FROM see_spells;
+SELECT * FROM see_vulnerable_learned_spells;
