@@ -63,6 +63,12 @@ CALL insert_spell_learned('exura', 'Bendran Helliot');
 CALL insert_spell_learned('utana vid', 'Almighty Fernandus');
 CALL insert_spell_learned('utevo res ina', 'Julius Fandoble');
 
+###ASSIGNING SOME DROP TO MONSTERS
+INSERT INTO associations (1,14, 32, 'drop');
+INSERT INTO associations (1,13, 36, 'drop');
+INSERT INTO associations (1,15, 35, 'drop');
+INSERT INTO associations (1,16, 33, 'drop');
+
 ##Felipe Mantovani 2017192
 SELECT id 'ID', name 'NAME',level 'LEVEL', hp 'HP', mp 'MP' FROM see_players;
 SELECT * FROM see_equipment;

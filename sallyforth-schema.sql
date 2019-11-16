@@ -560,3 +560,29 @@ CREATE VIEW see_vulnerable_learned_spells AS
 			ON sl.spell_id = ss.id 
 		JOIN see_players sp 
 			ON sl.vulnerable_id = sp.id;
+
+##Caue Duarte 2017228
+CREATE  OR REPLACE VIEW see_dropList AS
+	SELECT 
+		sm.ID 'ID',
+		sm.NAME 'NAME',
+		sm.LEVEL 'LEVEL',
+		si.NAME 'ITEM' 
+    FROM see_monsters sm
+		JOIN associations a
+			ON a.vulnerable_id = sm.ID;
+		JOIN see_items si
+			ON si.ID = a.item_id;
+
+#COUNTS THE NUMBER OF ITEMS DROPPED BY A MONSTER AND RETURN IT IN A VARIABLE
+DROP PROCEDURE IF EXISTS GetNumberOfDroppedItems;
+DELIMITER //
+CREATE PROCEDURE GetNumberOfDroppedItems (IN monsterID int, OUT total int)
+BEGIN
+SELECT count(ID) INTO total
+FROM
+see_dropList
+WHERE
+ID = monsterID;
+END//
+DELIMITER ;
