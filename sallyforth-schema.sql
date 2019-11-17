@@ -426,6 +426,53 @@ END//
 DELIMITER ;
 
 
+##SUBQUERY PROCEDURES
+
+##FELIPE MANTOVANI 2017192
+## THIS PROCEDURE selects TWO COLUMNS: THE MONSTER NAME AND ITS DROPPED ITEMS AMOUNT
+DROP PROCEDURE IF EXISTS get_how_many_items_a_monster_drop;
+DELIMITER //
+CREATE PROCEDURE get_how_many_items_a_monster_drop (IN monster_name text)
+BEGIN
+	SELECT
+		name 'MONSTER NAME',
+        (SELECT
+			count(item_id)
+		FROM
+			associations
+		WHERE 
+			vulnerable_id = get_id(monster_name)) 'NUMBER OF ITEMS IT DROPS'
+	FROM
+		recordable
+	WHERE
+		id = get_id(monster_name);
+END//
+DELIMITER ;
+
+## THIS PROCEDURE LISTS HOW MANY SPELLS EACH VULNERABLE CAN CAST. THE IN PARAMETER IS THE VULNERABLE TYPE (PLAYER, NPC OR monster)
+DROP PROCEDURE IF EXISTS get_learned_spells;
+DELIMITER //
+CREATE PROCEDURE get_learned_spells (IN vulnerable_type_ text)
+BEGIN
+	SELECT
+		name 'VULNERABLE NAME',
+        (SELECT 
+			count(spell_id)
+		FROM
+			spells_learned s
+		WHERE
+			s.vulnerable_id = v.vulnerable_id) 'AMOUNT OF LEARNED SPELLS'
+	FROM 
+		recordable r
+		JOIN 
+			vulnerable v
+		ON 
+			v.vulnerable_id = r.id
+	WHERE v.vulnerable_type = vulnerable_type_;
+END//
+DELIMITER ;
+
+
 DROP VIEW IF EXISTS see_spells;
 CREATE VIEW see_spells AS
 	SELECT 

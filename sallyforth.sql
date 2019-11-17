@@ -62,11 +62,23 @@ CALL insert_spell_learned('exura vita', 'Kendran Eliorath');
 CALL insert_spell_learned('exura', 'Bendran Helliot');
 CALL insert_spell_learned('utana vid', 'Almighty Fernandus');
 CALL insert_spell_learned('utevo res ina', 'Julius Fandoble');
+CALL get_learned_spells('player'); ## TESTING SUBQUERY PROCEDURE
 
 
 ###ASSIGNING SOME DROP TO MONSTERS
-CALL associate_vulnerable_with_an_item ('Mana Potion', 'Goblin','drop');
-CALL associate_vulnerable_with_an_item ('Cup of Water', 'Goblin', 'drop');
+CALL associate_vulnerable_with_an_item ('Mana Potion', 'Goblin','drop'); ##GOBLIN FIRST ITEM
+CALL associate_vulnerable_with_an_item ('Cup of Water', 'Goblin', 'drop'); #GOBLIN SECOND ITEM
+CALL get_how_many_items_a_monster_drop('Goblin'); ## Goblin = 2 ITEMS
+
+CALL associate_vulnerable_with_an_item ('Fire Sword', 'Demon', 'drop'); #DEMON FIRST ITEM
+CALL associate_vulnerable_with_an_item ('Flask of Blood', 'Demon', 'drop'); #DEMON SECOND ITEM
+CALL associate_vulnerable_with_an_item ('Giant Sword', 'Demon', 'drop'); #DEMON THIRD ITEM
+CALL get_how_many_items_a_monster_drop('Demon'); ## DEMON = 3 items
+
+
+
+
+
 CALL associate_vulnerable_with_an_item ('Fire Sword', 'Demon', 'drop');
 CALL associate_vulnerable_with_an_item('Knight Axe', 'Dragon', 'drop');
 CALL associate_vulnerable_with_an_item('Medusa Shield', 'Basilisk','drop');
@@ -88,3 +100,4 @@ SELECT * FROM see_vulnerable_learned_spells;
 SELECT * FROM see_drop_list; ##Caue Duarte 2017228
 CALL get_number_of_dropped_items('Goblin', @counter); ##Caue Duarte 2017228
 SELECT @counter 'Goblin drops:'; ##Caue Duarte 2017228
+
