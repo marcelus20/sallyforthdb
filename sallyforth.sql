@@ -1,6 +1,9 @@
 #####fake data generation
 
 
+
+
+
 ###INSERTING PLAYERS
 CALL insert_player('King Arthur', 'sorcerer');
 CALL insert_player('Kendran Eliorath', 'knight');
@@ -79,9 +82,9 @@ CALL get_how_many_items_a_monster_drop('Demon'); ## DEMON = 3 items
 
 
 
-CALL associate_vulnerable_with_an_item ('Fire Sword', 'Demon', 'drop');
-CALL associate_vulnerable_with_an_item('Knight Axe', 'Dragon', 'drop');
-CALL associate_vulnerable_with_an_item('Medusa Shield', 'Basilisk','drop');
+#CALL associate_vulnerable_with_an_item ('Fire Sword', 'Demon', 'drop');
+#CALL associate_vulnerable_with_an_item('Knight Axe', 'Dragon', 'drop');
+#CALL associate_vulnerable_with_an_item('Medusa Shield', 'Basilisk','drop');
 
 
 
@@ -96,8 +99,25 @@ SELECT * FROM see_monsters;
 SELECT * FROM see_spells;
 SELECT * FROM see_vulnerable_learned_spells;
 
-
+#####CAUE, PLEASE, EXECUTE THESE THREE LINES AND TAKE SCREENSHOT
 SELECT * FROM see_drop_list; ##Caue Duarte 2017228
 CALL get_number_of_dropped_items('Goblin', @counter); ##Caue Duarte 2017228
 SELECT @counter 'Goblin drops:'; ##Caue Duarte 2017228
+
+
+
+
+
+
+
+CALL insert_taxonomy('Mastermind shield', 'item', @id);
+SELECT taxonomy_id, taxonomy_type FROM taxonomy WHERE taxonomy_id = @id;
+
+
+####TARAS, PLEASE, EXECUTE ONLY THESE TWO LINES AND TAKE THE SCREENSHOT
+CALL insert_equipment('Bonelord Axe', 34, 53, @id);
+SELECT id, name, weight, defense FROM see_equipment WHERE id =  @id;
+
+
+
 
