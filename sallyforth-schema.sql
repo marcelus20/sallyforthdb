@@ -272,7 +272,7 @@ CREATE INDEX records_name ON recordable (name);
 ##CREATION OF A FUNCTION THAT MAPS AN ITEM NAME TO ITS ID
 DROP FUNCTION IF EXISTS get_id;
 DELIMITER //
-CREATE FUNCTION get_id(name_ TEXT) RETURNS int READS sql data
+CREATE FUNCTION get_id(name_ TEXT) RETURNS int READS sql data NOT DETERMINISTIC
 BEGIN
 	RETURN (SELECT id FROM recordable WHERE name = name_);
 END //
@@ -571,7 +571,7 @@ CREATE VIEW see_items AS
 		r.id 'ID',
 		r.name 'NAME',
 		#t.taxonomy_type 'GROUP',
-		#i.item_type 'SUBGROUP',
+		i.item_type 'SUBGROUP',
 		i.weight 'WEIGHT'
 	FROM recordable r 
 		#JOIN taxonomy t ON r.id = t.taxonomy_id
@@ -584,7 +584,7 @@ CREATE VIEW see_equipment AS
 		si.id 'ID',
 		si.name 'NAME',
 		#si.group 'GROUP',
-		#si.subgroup 'SUB GROUP',
+		si.subgroup 'SUB GROUP',
 		si.weight 'WEIGHT',
 		p.defense 'DEFENSE' 
 	FROM see_items si
@@ -612,7 +612,7 @@ CREATE VIEW see_consumables AS
 		si.name 'NAME',
 		si.weight 'WEIGHT',
 		#si.group 'GROUP',
-		#si.soubgroup 'SUBGROUP',
+		si.subgroup 'SUBGROUP',
 		h.manapoints_to_heal 'MP TO HEAL',
 		h.hitpoints_to_heal 'HP TO HEAL'
 	FROM healability h 
@@ -644,4 +644,9 @@ CREATE  OR REPLACE VIEW see_drop_list AS
 			ON a.vulnerable_id = sm.ID
 		JOIN see_items si
 			ON si.ID = a.item_id;
+
+
+
+
+
 

@@ -121,3 +121,39 @@ SELECT id, name, weight, defense FROM see_equipment WHERE id =  @id;
 
 
 
+
+
+
+
+
+
+
+###PART B
+####CORRELATED SUBQUERY
+
+###For every item, shows which is consumable and which is not.
+#Clear the word "Explain" if you want to see the output of this query
+EXPLAIN SELECT 
+	s.id,
+    r.name,
+    IF((SELECT s.subgroup FROM see_consumables sc WHERE sc.id = s.id) is null, "No", "Yes") 'is consumable'
+    
+FROM 
+	see_items s
+JOIN 
+	recordable r
+    ON
+		r.id = s.id;
+        
+## NO correlated subquery
+#Qty of consumables out of the items amount.
+#Clear the word "Explain" if you want to see the output of this query
+EXPLAIN SELECT 
+	count(s.id)'Qty of items',
+    (SELECT count(sc.id) FROM see_consumables sc) 'Qty of consumables from items'
+    
+FROM 
+	see_items s;
+
+
+
